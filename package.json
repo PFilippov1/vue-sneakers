@@ -15,9 +15,8 @@
     "format": "prettier --write src/"
   },
   "lint-staged": {
-    "*.{vue,js,jsx,cjs,mjs}": [
-      "eslint --fix"
-    ]
+    "**/*.{vue,js,ts,jsx,tsx,mjs,cjs}": "eslint --fix",
+    "**/*.{vue,js,ts,jsx,tsx,css,scss,less,md,html,json}": "prettier --write"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.16",
