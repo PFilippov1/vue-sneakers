@@ -49,10 +49,7 @@ export default defineConfig([
       'no-debugger': 'warn',
       'prefer-const': 'error',
       'no-var': 'error',
-      'no-duplicate-imports': 'error',
-      'vue/no-unused-vars': 'error',
-      'vue/no-unused-components': 'error',
-      'vue/no-undef-components': 'error'
+      'no-duplicate-imports': 'error'
     }
   },
 
@@ -69,7 +66,10 @@ export default defineConfig([
       'vue/singleline-html-element-content-newline': 'off',
       'vue/multiline-html-element-content-newline': 'off',
       'vue/max-attributes-per-line': 'off',
-      'vue/no-parsing-error': 'error'
+      'vue/no-parsing-error': 'error',
+      'vue/valid-template-root': 'error',
+      'vue/require-component-is': 'error',
+      'vue/require-prop-types': 'error'
     }
   }
 ])

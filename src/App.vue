@@ -3,8 +3,8 @@
 </template>
 
 <script setup>
-console.log('Hello!')
+import { ref } from 'vue'
+console.log('Hello there!')
 </script>
-<ffFf />
 
 <style scoped></style>
