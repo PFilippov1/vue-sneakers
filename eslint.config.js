@@ -8,7 +8,7 @@ export default defineConfig([
   // linting files
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{js,mjs,jsx,ts,tsx,vue}']
+    files: ['**/*.{js,mjs,jsx,vue}']
   },
 
   // ignored
