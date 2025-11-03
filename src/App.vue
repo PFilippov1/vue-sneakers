@@ -3,12 +3,8 @@
 </template>
 
 <script setup>
-import tT from './components/tT.vue'
-console.log('Hello World!')
+console.log('Hello!')
 </script>
-
-<temPl-PL />
-<t-t />
-<aN />
+<ffFf />
 
 <style scoped></style>
