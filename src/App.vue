@@ -7,10 +7,10 @@
         <!-- <Drawer/> -->
 
         <div class="flex gap-5">
-          <select class="px-3 py-2 border rounded-md outline-none">
+          <select class="px-3 py-2 border rounded-md outline-none" @change="onChangeSelect">
             <option value="name">Name</option>
-            <option value="asc">Price &uarr;</option>
-            <option value="dsc">Price &darr;</option>
+            <option value="price">Price &uarr;</option>
+            <option value="-price">Price &darr;</option>
           </select>
 
           <div class="relative">
@@ -19,6 +19,7 @@
               class="border rounded-md py-2 pl-11 pr-4 outline-none focus:border-gray-400"
               type="text"
               placeholder="Search..."
+              @input="onChangeSearchInput"
             >
           </div>
         </div>
@@ -31,33 +32,74 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch, reactive, provide } from 'vue'
 import CardList from './components/CardList.vue'
 import Drawer from './components/Drawer.vue'
 import Header from './components/Header.vue'
+import axios from 'axios'
 
 const items = ref([])
 
-onMounted(async () => {
-  async function fetchData(url) {
-    try {
-      const response = await fetch(url)
+const filters = reactive({
+  sortBy: 'title',
+  searchQuery: ''
+})
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+const onChangeSearchInput = (event) => {
+  filters.searchQuery = event.target.value
+}
 
-      const data = await response.json()
-      console.log('Data received:', data)
-      return data
-    } catch (error) {
-      console.error('Error fetching data:', error)
-      throw error
-    }
+const onChangeSelect = (event) => {
+  filters.sortBy = event.target.value
+}
+
+const fetchItems = async () => {
+  const params = {
+    sortBy: filters.sortBy
+  }
+  if (filters.searchQuery) {
+    params.title = `*${filters.searchQuery}*`
   }
 
-  items.value = await fetchData('https://10eb8e970dd245c5.mokky.dev/items')
+  try {
+    const { data } = await axios.get(`https://10eb8e970dd245c5.mokky.dev/items`, { params })
+    items.value = data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const fetchFavorites = async () => {
+  try {
+    const { data: favorites } = await axios.get(`https://10eb8e970dd245c5.mokky.dev/favorites`)
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find((favorite) => favorite.parentId === item.id)
+
+      if (!favorite) {
+        return item
+      }
+
+      return { ...item, isFavorite: true, favoriteId: favorite.id }
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const addToFavorite = async (item) => {
+  item.isFavorite = item.isFavorite ? false : true
+}
+
+onMounted(async () => {
+  await fetchItems()
+  await fetchFavorites()
 })
+
+watch(filters, async () => {
+  fetchItems()
+})
+
+provide('addToFavorite', addToFavorite)
 </script>
 
 <style scoped></style>
