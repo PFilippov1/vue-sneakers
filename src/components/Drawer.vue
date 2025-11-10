@@ -31,7 +31,6 @@
 <script setup>
 import CartItemList from './CartItemList.vue'
 import DrawerHead from './DrawerHead.vue'
-import { computed } from 'vue'
 const emit = defineEmits(['createOrder'])
 
 defineProps({
