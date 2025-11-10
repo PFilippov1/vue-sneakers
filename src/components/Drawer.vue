@@ -1,6 +1,6 @@
 <template>
   <div class="top-0 left-0 fixed h-full w-full z-10 bg-black opacity-70" />
-  <div class="bg-white z-20 fixed h-full w-96 top-0 right-0 p-8">
+  <div class="bg-white z-20 fixed h-full w-96 top-0 right-0 p-8 overflow-y-auto">
     <DrawerHead />
     <CartItemList />
 
@@ -18,8 +18,9 @@
       </div>
 
       <button
-        disabled=""
+        :disabled="buttonDisabled"
         class="mt-4 transition bg-lime-500 w-full rounded-xl py-3 text-white disabled:bg-slate-300 hover:bg-lime-600 active:bg-lime-700 cursor-pointer"
+        @click="() => emit('createOrder')"
       >
         Create order
       </button>
@@ -30,8 +31,12 @@
 <script setup>
 import CartItemList from './CartItemList.vue'
 import DrawerHead from './DrawerHead.vue'
+import { computed } from 'vue'
+const emit = defineEmits(['createOrder'])
+
 defineProps({
   totalPrice: Number,
-  vatPrice: Number
+  vatPrice: Number,
+  buttonDisabled: Boolean
 })
 </script>

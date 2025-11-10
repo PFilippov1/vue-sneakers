@@ -4,7 +4,13 @@
     <div class="p-10">
       <div class="flex justify-between items-center">
         <h2 class="text-3xl font-bold mb-8">All sneakers</h2>
-        <Drawer v-if="drawerOpen" :total-price="totalPrice" :vat-price="vatPrice" />
+        <Drawer
+          v-if="drawerOpen"
+          :total-price="totalPrice"
+          :vat-price="vatPrice"
+          :button-disabled="cartButtonDisabled"
+          @create-order="createOrder"
+        />
 
         <div class="flex gap-5">
           <select class="px-3 py-2 border rounded-md outline-none" @change="onChangeSelect">
@@ -41,10 +47,15 @@ import axios from 'axios'
 const items = ref([])
 const cart = ref([])
 
+const isCreatedOrder = ref(false)
 const drawerOpen = ref(false)
 
 const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
 const vatPrice = computed(() => Math.round((totalPrice.value * 5) / 100))
+
+const cartButtonDisabled = computed(() =>
+  isCreatedOrder.value || cart.value.length === 0 ? true : false
+)
 
 const closeDrawer = () => {
   drawerOpen.value = false
@@ -67,6 +78,22 @@ const addToCart = (item) => {
 const removeFromCart = (item) => {
   cart.value.splice(cart.value.indexOf(item), 1)
   item.isAdded = false
+}
+
+const createOrder = async () => {
+  try {
+    isCreatedOrder.value = true
+    const { data } = await axios.post(`https://10eb8e970dd245c5.mokky.dev/orders`, {
+      items: cart.value,
+      totalPrice: totalPrice.value
+    })
+    cart.value = []
+    return data
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isCreatedOrder.value = false
+  }
 }
 
 const onClickPlus = (item) => {
@@ -151,6 +178,13 @@ onMounted(async () => {
 
 watch(filters, async () => {
   fetchItems()
+})
+
+watch(cart, () => {
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: false
+  }))
 })
 
 provide('cart', {
