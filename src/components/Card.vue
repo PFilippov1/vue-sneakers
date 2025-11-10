@@ -14,7 +14,7 @@
       <div class="flex justify-between mt-5">
         <div class="flex flex-col">
           <span class="text-slate-400">Price:</span>
-          <b>{{ price }}</b>
+          <b>{{ price }} Euro</b>
         </div>
         <img :src="!isAdded ? '/plus.svg' : '/checked.svg'" alt="plus" @click="onClickAdd" >
       </div>

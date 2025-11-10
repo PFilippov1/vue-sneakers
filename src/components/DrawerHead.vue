@@ -7,6 +7,7 @@
       viewBox="0 0 16 14"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      @click="closeDrawer"
     >
       <path
         d="M1 7H14.7143"
@@ -26,3 +27,8 @@
     <h2 class="text-2xl font-bold">Cart</h2>
   </div>
 </template>
+
+<script setup>
+import { inject } from 'vue'
+const { closeDrawer } = inject('cart')
+</script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-4 gap-5">
+  <em class="grid grid-cols-4 gap-5">
     <Card
       v-for="item in items"
       :id="item.id"
@@ -9,23 +9,18 @@
       :price="item.price"
       :isFavorite="item.isFavorite"
       :isAdded="item.isAdded"
-      :onClickFavorite="() => addToFavorite(item)"
+      :onClickFavorite="() => emit('addToFavorite', item)"
+      :onClickAdd="() => emit('addToCart', item)"
     />
-  </div>
+  </em>
 </template>
 
 <script setup>
 import Card from './Card.vue'
-import { inject } from 'vue'
 
 defineProps({
   items: Array
 })
 
-//TODO
-const onClickAdd = () => {
-  console.log('add')
-}
-
-const addToFavorite = inject('addToFavorite')
+const emit = defineEmits(['addToFavorite', 'addToCart'])
 </script>

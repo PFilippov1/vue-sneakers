@@ -1,5 +1,5 @@
 <template>
-  <div class="top-0 left-0 fixed h-full w-full z-10 bg-black opacity-70"/>
+  <div class="top-0 left-0 fixed h-full w-full z-10 bg-black opacity-70" />
   <div class="bg-white z-20 fixed h-full w-96 top-0 right-0 p-8">
     <DrawerHead />
     <CartItemList />
@@ -7,14 +7,14 @@
     <div class="flex flex-col gap-4 mb-6 mt-7">
       <div class="flex gap-2">
         <span>Total:</span>
-        <div class="flex-1 border-b border-dashed"/>
-        <b>333 Euro</b>
+        <div class="flex-1 border-b border-dashed" />
+        <b>{{ totalPrice }} Euro</b>
       </div>
 
       <div class="flex gap-2">
         <span>Tax 5%:</span>
-        <div class="flex-1 border-b border-dashed"/>
-        <b>900 Euro</b>
+        <div class="flex-1 border-b border-dashed" />
+        <b>{{ vatPrice }} Euro</b>
       </div>
 
       <button
@@ -30,4 +30,8 @@
 <script setup>
 import CartItemList from './CartItemList.vue'
 import DrawerHead from './DrawerHead.vue'
+defineProps({
+  totalPrice: Number,
+  vatPrice: Number
+})
 </script>
