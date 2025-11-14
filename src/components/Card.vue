@@ -4,6 +4,7 @@
       class="relative bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer hover:-translate-y-2 transition hover:shadow-2xl"
     >
       <img
+        v-if="onClickFavorite"
         :src="!isFavorite ? '/like-1.svg' : '/like-2.svg'"
         alt="like"
         class="absolute top-8 left-8"
@@ -16,7 +17,12 @@
           <span class="text-slate-400">Price:</span>
           <b>{{ price }} Euro</b>
         </div>
-        <img :src="!isAdded ? '/plus.svg' : '/checked.svg'" alt="plus" @click="onClickAdd" >
+        <img
+          v-if="onClickAdd"
+          :src="!isAdded ? '/plus.svg' : '/checked.svg'"
+          alt="plus"
+          @click="onClickAdd"
+        >
       </div>
     </div>
   </div>

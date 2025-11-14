@@ -1,5 +1,5 @@
 <template>
-  <em class="grid grid-cols-4 gap-5">
+  <em v-auto-animate class="grid grid-cols-4 gap-5">
     <Card
       v-for="item in items"
       :id="item.id"
@@ -9,8 +9,8 @@
       :price="item.price"
       :isFavorite="item.isFavorite"
       :isAdded="item.isAdded"
-      :onClickFavorite="() => emit('addToFavorite', item)"
-      :onClickAdd="() => emit('addToCart', item)"
+      :onClickFavorite="isFavorites ? null : () => emit('addToFavorite', item)"
+      :onClickAdd="isFavorites ? null : () => emit('addToCart', item)"
     />
   </em>
 </template>
@@ -19,7 +19,8 @@
 import Card from './Card.vue'
 
 defineProps({
-  items: Array
+  items: Array,
+  isFavorites: Boolean
 })
 
 const emit = defineEmits(['addToFavorite', 'addToCart'])
