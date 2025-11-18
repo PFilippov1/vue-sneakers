@@ -9,19 +9,21 @@
       :price="item.price"
       :isFavorite="item.isFavorite"
       :isAdded="item.isAdded"
-      :onClickFavorite="isFavorites ? null : () => emit('addToFavorite', item)"
-      :onClickAdd="isFavorites ? null : () => emit('addToCart', item)"
+      :onClickFavorite="isFavorites ? undefined : () => emit('addToFavorite', item)"
+      :onClickAdd="isFavorites ? undefined : () => emit('addToCart', item)"
     />
   </em>
 </template>
 
-<script setup>
+<script  lang="ts" setup>
+
 import Card from './Card.vue'
 
-defineProps({
-  items: Array,
-  isFavorites: Boolean
-})
+interface Props {
+  items: Array<any>;
+  isFavorites: boolean;
+}
 
-const emit = defineEmits(['addToFavorite', 'addToCart'])
+defineProps<Props>();
+const emit = defineEmits(['addToFavorite', 'addToCart']);
 </script>

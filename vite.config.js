@@ -9,14 +9,22 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      script: {
+        propsDestructure: true,
+        defineModel: true
+      }
+    }),
     vueJsx(),
     vueDevTools(),
-    tailwindcss(),
+    tailwindcss()
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
+    }
   },
+  build: {
+    target: 'ES2020'
+  }
 })

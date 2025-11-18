@@ -1,13 +1,14 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import globals from 'globals'
 import js from '@eslint/js'
+import ts from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
 export default defineConfig([
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{js,mjs,jsx,vue}']
+    files: ['**/*.{js,mjs,jsx,ts,mts,tsx,vue}']
   },
 
   globalIgnores([
@@ -29,11 +30,16 @@ export default defineConfig([
         ...globals.node
       },
       ecmaVersion: 'latest',
-      sourceType: 'module'
+      sourceType: 'module',
+      parserOptions: {
+        parser: ts.parser,
+        extraFileExtensions: ['.vue']
+      }
     }
   },
 
   js.configs.recommended,
+  ...ts.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   skipFormatting,
 
@@ -44,12 +50,17 @@ export default defineConfig([
       'vue/attribute-hyphenation': 'off',
       'vue/require-default-prop': 'off',
       'vue/no-v-html': 'off',
-      'no-unused-vars': 'warn',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'warn',
       'no-debugger': 'warn',
       'prefer-const': 'error',
       'no-var': 'error',
-      'no-duplicate-imports': 'error'
+      'no-duplicate-imports': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn'
     }
   },
 
@@ -70,6 +81,14 @@ export default defineConfig([
       'vue/valid-template-root': 'error',
       'vue/require-component-is': 'error',
       'vue/require-prop-types': 'error'
+    }
+  },
+
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/prefer-ts-expect-error': 'warn'
     }
   }
 ])
