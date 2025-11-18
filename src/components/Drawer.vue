@@ -3,13 +3,21 @@
   <div class="bg-white z-20 fixed h-full w-96 top-0 right-0 p-8 overflow-y-auto">
     <DrawerHead />
 
-    <div v-if="!totalPrice" class="flex h-full items-center">
+    <div v-if="!totalPrice || orderId" class="flex h-full items-center">
       <InfoBlock
+        v-if="!totalPrice && !orderId"
         img-url="/package-icon.png"
         title="Empty Cart"
         description="Add sneakers to your cart"
       />
+      <InfoBlock
+        v-if="orderId"
+        img-url="/order-success-icon.png"
+        title="Thanks for your order"
+        :description="`Your order #${orderId} will soon be transferred to courier delivery`"
+      />
     </div>
+
     <div v-else>
       <CartItemList />
 
@@ -29,7 +37,7 @@
         <button
           :disabled="buttonDisabled"
           class="mt-4 transition bg-lime-500 w-full rounded-xl py-3 text-white disabled:bg-slate-300 hover:bg-lime-600 active:bg-lime-700 cursor-pointer"
-          @click="() => emit('createOrder')"
+          @click="createOrder"
         >
           Create order
         </button>
@@ -39,14 +47,39 @@
 </template>
 
 <script setup>
+import { ref, inject, computed } from 'vue'
 import CartItemList from './CartItemList.vue'
 import DrawerHead from './DrawerHead.vue'
 import InfoBlock from './InfoBlock.vue'
-const emit = defineEmits(['createOrder'])
+import axios from 'axios'
 
-defineProps({
+const props = defineProps({
   totalPrice: Number,
-  vatPrice: Number,
-  buttonDisabled: Boolean
+  vatPrice: Number
 })
+
+const isCreating = ref(false)
+const orderId = ref(null)
+
+const createOrder = async () => {
+  try {
+    isCreating.value = true
+    const { data } = await axios.post(`https://10eb8e970dd245c5.mokky.dev/orders`, {
+      items: cart.value,
+      totalPrice: props.totalPrice
+    })
+    cart.value = []
+    orderId.value = data.id
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isCreating.value = false
+  }
+}
+
+const { cart } = inject('cart')
+
+const cartIsEmpty = computed(() => cart.value.length === 0)
+
+const buttonDisabled = computed(() => isCreating.value || cartIsEmpty.value)
 </script>

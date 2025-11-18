@@ -15,7 +15,7 @@
           class="border rounded-md py-2 pl-11 pr-4 outline-none focus:border-gray-400"
           type="text"
           placeholder="Search..."
-          @input="onChangeSearchInput"
+          @input="onChangeSearchInputDebounced"
         >
       </div>
     </div>
@@ -44,6 +44,15 @@ const onClickPlus = (item) => {
 const onChangeSearchInput = (event) => {
   filters.searchQuery = event.target.value
 }
+// debounce realization for search input (not reason for external library use)
+const onChangeDebounce = (func, ms) => {
+  let timeout
+  return function () {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => func.apply(this, arguments), ms)
+  }
+}
+const onChangeSearchInputDebounced = onChangeDebounce(onChangeSearchInput, 500)
 
 const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
