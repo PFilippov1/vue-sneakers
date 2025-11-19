@@ -34,9 +34,13 @@
   </header>
 </template>
 
-<script setup>
-defineProps({ totalPrice: Number })
-const emit = defineEmits(['openDrawer'])
-</script>
+<script setup lang="ts">
 
-<style scoped></style>
+defineProps<{
+  totalPrice: number
+}>()
+
+const emit = defineEmits<{
+  (e: 'openDrawer'): void
+}>()
+</script>

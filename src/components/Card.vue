@@ -19,7 +19,7 @@ v-if="onClickFavorite" :src="!isFavorite ? '/like-1.svg' : '/like-2.svg'" alt="l
 </template>
 
 <script  lang="ts" setup>
-interface Props {
+interface CardProps {
   id?: number;
   imageUrl?: string;
   title?: string;
@@ -30,5 +30,5 @@ interface Props {
   onClickAdd?: (e?: MouseEvent) => void;
 }
 
-defineProps<Props>();
+defineProps<CardProps>();
 </script>

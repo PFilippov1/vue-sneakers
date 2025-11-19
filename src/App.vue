@@ -9,34 +9,38 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, provide, computed } from 'vue'
 import Drawer from './components/Drawer.vue'
 import Header from './components/Header.vue'
+import { Item, CartContext } from './types/index'
 
-const cart = ref([])
-
+const cart = ref<Item[]>([])
 const drawerOpen = ref(false)
 
-const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
+const totalPrice = computed(() =>
+  cart.value.reduce((acc, item) => acc + item.price, 0)
+)
 const vatPrice = computed(() => Math.round((totalPrice.value * 5) / 100))
 
 const closeDrawer = () => {
   drawerOpen.value = false
 }
-
 const openDrawer = () => {
   drawerOpen.value = true
 }
 
-const addToCart = (item) => {
+const addToCart = (item: Item) => {
   cart.value.push(item)
   item.isAdded = true
 }
 
-const removeFromCart = (item) => {
-  cart.value.splice(cart.value.indexOf(item), 1)
-  item.isAdded = false
+const removeFromCart = (item: Item) => {
+  const index = cart.value.findIndex((i) => i.id === item.id)
+  if (index !== -1) {
+    cart.value.splice(index, 1)
+    item.isAdded = false
+  }
 }
 
 watch(
@@ -47,13 +51,11 @@ watch(
   { deep: true }
 )
 
-provide('cart', {
-  closeDrawer,
-  openDrawer,
+provide<CartContext>('cart', {
   cart,
   addToCart,
-  removeFromCart
+  removeFromCart,
+  openDrawer,
+  closeDrawer
 })
 </script>
-
-<style scoped></style>

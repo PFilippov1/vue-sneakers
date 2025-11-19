@@ -26,14 +26,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardList from '@/components/CardList.vue'
 import axios from 'axios'
-import { inject, ref, reactive, watch, onMounted } from 'vue'
-const items = ref([])
-const { cart, addToCart, removeFromCart } = inject('cart')
+import { Item, CartContext, Favorite } from '@/types/index'
+import { inject, ref, reactive, watch, onMounted, Ref } from 'vue'
 
-const onClickPlus = (item) => {
+const items = ref<Item[]>([])
+
+const { cart, addToCart, removeFromCart } = inject('cart') as CartContext
+
+const onClickPlus = (item: Item) => {
   if (!item.isAdded) {
     addToCart(item)
   } else {
@@ -41,32 +44,31 @@ const onClickPlus = (item) => {
   }
 }
 
-const onChangeSearchInput = (event) => {
-  filters.searchQuery = event.target.value
+const onChangeSearchInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  filters.searchQuery = target.value
 }
-// debounce realization for search input (not reason for external library use)
-const onChangeDebounce = (func, ms) => {
-  let timeout
-  return function () {
+
+const onChangeDebounce = (func: (...args: any[]) => void, ms: number) => {
+  let timeout: number
+  return function (this: any, ...args: any[]) {
     clearTimeout(timeout)
-    timeout = setTimeout(() => func.apply(this, arguments), ms)
+    timeout = window.setTimeout(() => func.apply(this, args), ms)
   }
 }
 const onChangeSearchInputDebounced = onChangeDebounce(onChangeSearchInput, 500)
 
-const onChangeSelect = (event) => {
-  filters.sortBy = event.target.value
+const onChangeSelect = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  filters.sortBy = target.value
 }
 
-const addToFavorite = async (item) => {
+const addToFavorite = async (item: Item) => {
   try {
     if (!item.isFavorite) {
-      const obj = {
-        item_id: item.id
-      }
+      const obj = { item_id: item.id }
       item.isFavorite = true
-      const { data } = await axios.post(`https://10eb8e970dd245c5.mokky.dev/favorites`, obj)
-
+      const { data } = await axios.post<Favorite>(`https://10eb8e970dd245c5.mokky.dev/favorites`, obj)
       item.favoriteId = data.id
     } else {
       await axios.delete(`https://10eb8e970dd245c5.mokky.dev/favorites/${item.favoriteId}`)
@@ -74,7 +76,7 @@ const addToFavorite = async (item) => {
       item.favoriteId = null
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -91,7 +93,7 @@ watch(cart, () => {
 })
 
 watch(filters, async () => {
-  fetchItems()
+  await fetchItems()
 })
 
 watch(
@@ -103,7 +105,7 @@ watch(
 )
 
 const fetchItems = async () => {
-  const params = {
+  const params: Record<string, string> = {
     sortBy: filters.sortBy
   }
   if (filters.searchQuery) {
@@ -111,8 +113,7 @@ const fetchItems = async () => {
   }
 
   try {
-    const { data } = await axios.get(`https://10eb8e970dd245c5.mokky.dev/items`, { params })
-    items.value = data
+    const { data } = await axios.get<Item[]>(`https://10eb8e970dd245c5.mokky.dev/items`, { params })
     items.value = data.map((obj) => ({
       ...obj,
       isFavorite: false,
@@ -120,24 +121,21 @@ const fetchItems = async () => {
       isAdded: false
     }))
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
 const fetchFavorites = async () => {
   try {
-    const { data: favorites } = await axios.get(`https://10eb8e970dd245c5.mokky.dev/favorites`)
+    const { data: favorites } = await axios.get<Favorite[]>(`https://10eb8e970dd245c5.mokky.dev/favorites`)
     items.value = items.value.map((item) => {
-      const favorite = favorites.find((favorite) => favorite.item_id === item.id)
-
-      if (!favorite) {
-        return item
-      }
-
-      return { ...item, isFavorite: true, favoriteId: favorite.id }
+      const favorite = favorites.find((fav) => fav.item_id === item.id)
+      return favorite
+        ? { ...item, isFavorite: true, favoriteId: favorite.id }
+        : item
     })
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -147,9 +145,11 @@ onMounted(async () => {
 
   await fetchItems()
   await fetchFavorites()
+
   items.value = items.value.map((item) => ({
     ...item,
     isAdded: cart.value.some((card) => card.id === item.id)
   }))
 })
 </script>
+

@@ -15,15 +15,18 @@
   </em>
 </template>
 
-<script  lang="ts" setup>
-
+<script lang="ts" setup>
 import Card from './Card.vue'
+import type { Item } from '@/types/index'
 
 interface Props {
-  items: Array<any>;
-  isFavorites: boolean;
+  items: Item[]
+  isFavorites?: boolean 
 }
 
-defineProps<Props>();
-const emit = defineEmits(['addToFavorite', 'addToCart']);
+const props = defineProps<Props>()
+const emit = defineEmits<{
+  (e: 'addToFavorite', item: Item): void
+  (e: 'addToCart', item: Item): void
+}>()
 </script>

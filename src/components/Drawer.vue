@@ -46,20 +46,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import CartItemList from './CartItemList.vue'
 import DrawerHead from './DrawerHead.vue'
 import InfoBlock from './InfoBlock.vue'
 import axios from 'axios'
+import { CartContext } from '@/types'
 
-const props = defineProps({
-  totalPrice: Number,
-  vatPrice: Number
-})
+const props = defineProps<{
+  totalPrice: number,
+  vatPrice: number
+}>()
 
 const isCreating = ref(false)
-const orderId = ref(null)
+const orderId = ref<number | null>(null)
 
 const createOrder = async () => {
   try {
@@ -77,7 +78,7 @@ const createOrder = async () => {
   }
 }
 
-const { cart } = inject('cart')
+const { cart } = inject('cart') as CartContext
 
 const cartIsEmpty = computed(() => cart.value.length === 0)
 
