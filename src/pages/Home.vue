@@ -30,7 +30,7 @@
 import CardList from '@/components/CardList.vue'
 import axios from 'axios'
 import { Item, CartContext, Favorite } from '@/types/index'
-import { inject, ref, reactive, watch, onMounted, Ref } from 'vue'
+import { inject, ref, reactive, watch, onMounted } from 'vue'
 
 const items = ref<Item[]>([])
 
@@ -44,18 +44,23 @@ const onClickPlus = (item: Item) => {
   }
 }
 
-const onChangeSearchInput = (event: Event) => {
+const onChangeSearchInput = (event: Event): void => {
   const target = event.target as HTMLInputElement
   filters.searchQuery = target.value
 }
 
-const onChangeDebounce = (func: (...args: any[]) => void, ms: number) => {
-  let timeout: number
-  return function (this: any, ...args: any[]) {
+const onChangeDebounce = (
+  func: (event: Event) => void,
+  ms: number
+): ((event: Event) => void) => {
+  let timeout: ReturnType<typeof setTimeout>
+
+  return (event: Event): void => {
     clearTimeout(timeout)
-    timeout = window.setTimeout(() => func.apply(this, args), ms)
+    timeout = setTimeout(() => func(event), ms)
   }
 }
+
 const onChangeSearchInputDebounced = onChangeDebounce(onChangeSearchInput, 500)
 
 const onChangeSelect = (event: Event) => {
